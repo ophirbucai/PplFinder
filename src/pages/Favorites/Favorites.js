@@ -5,27 +5,34 @@ import { usePeopleFetch } from "hooks";
 import * as S from "./style";
 import { UserContext } from "../../AppRouter";
 
-const Home = () => {
-  const { nationalities, users, isLoading } = useContext(UserContext);
+const Favorites = () => {
+  const { nationalities, favorites, users } = useContext(UserContext);
   const [filteredUsers, setFilteredUsers] = useState(users);
+  const [filteredByNationality, setFilteredByNationality] = useState(filteredUsers);
   useEffect(() => {
-    setFilteredUsers(users.filter((user) => {
+    setFilteredUsers(users?.filter((user) => {
+      return favorites.includes(user.login.username);
+    }));
+  }, [users, favorites]);
+
+  useEffect(() => {
+    setFilteredByNationality(filteredUsers?.filter((user) => {
       return nationalities.includes(user.nat);
     }));
-  }, [users, nationalities]);
+  }, [nationalities]);
 
   return (
     <S.Home>
       <S.Content>
         <S.Header>
           <Text size="64px" bold>
-            PplFinder
+            Favorites
           </Text>
         </S.Header>
-        <UserList users={nationalities.length ? filteredUsers : users} isLoading={isLoading} />
+        <UserList users={nationalities.length ? filteredByNationality : filteredUsers} />
       </S.Content>
     </S.Home>
   );
 };
 
-export default Home;
+export default Favorites;
